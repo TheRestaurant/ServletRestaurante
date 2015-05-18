@@ -169,7 +169,6 @@ public class Peticiones extends HttpServlet {
                                 for (int i = 1; i <= columns; i++) {
                                     objetoJSON.put(rsMetaData.getColumnLabel(i), r.getString(i));
                                 }
-                                System.out.println(objetoJSON + "\n");
                                 array.put(objetoJSON);
                             }
                         } catch (SQLException ex) {
@@ -250,7 +249,7 @@ public class Peticiones extends HttpServlet {
             consulta = "insert into pedidos values(0, '" + fechaHora + "', 0, 0, 1, '" + usuario + "', " + idmesa + ", 1)";
             System.out.println(consulta);
             bd.ejecutarInsert(consulta);
-            primerInsert();
+            primerInsert(idmesa);
         }
         int producto = idProducto;
         consulta = "SELECT count(*) as lineas "
@@ -286,7 +285,10 @@ public class Peticiones extends HttpServlet {
         }
     }
     
-    private void primerInsert(){
+    private void primerInsert(int idmesa){
+        r = bd.ejecutarSelect("select * from pedidos where mesas_idmesa="
+                + idmesa
+                + " order by fechapedido desc");
         try {
             if (r.next()) {
                 pedido = r.getInt("idpedido");
