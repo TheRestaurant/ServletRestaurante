@@ -31,7 +31,11 @@ import org.json.JSONTokener;
  */
 @WebServlet(name = "Peticiones", urlPatterns = {"/peticiones"})
 public class Peticiones extends HttpServlet {
-
+    
+    int pedido;
+    int estado;
+    ControlDB bd;
+    ResultSet r;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -45,7 +49,6 @@ public class Peticiones extends HttpServlet {
             throws ServletException, IOException {
         //response.setContentType("text/html;charset=UTF-8");
         String target, op, action, view;
-        ControlDB bd;
 
         target = request.getParameter("target");
         op = request.getParameter("op");
@@ -227,22 +230,16 @@ public class Peticiones extends HttpServlet {
     }
 
     private void agregarProducto(int idmesa, int idProducto) {
-        ControlDB bd = new ControlDB();
-        bd.cargarDriver();
-        bd.conectar();
-        ResultSet r;
-        String horaLlegada;
         String usuario = "admin";
-        int pedido = 0;
-        int estado = 1;
+        pedido = 0;
+        estado = 1;
         r = bd.ejecutarSelect("select * from pedidos where mesas_idmesa="
                 + idmesa
                 + " order by fechapedido desc");
         try {
             if (r.next()) {
                 pedido = r.getInt("idpedido");
-                estado = r.getInt("estadopedido");
-                horaLlegada = r.getString("fechapedido");
+                estado = r.getInt("estadopedido");;
             }
         } catch (SQLException ex) {
             System.out.println(ex.toString());
@@ -253,6 +250,7 @@ public class Peticiones extends HttpServlet {
             consulta = "insert into pedidos values(0, '" + fechaHora + "', 0, 0, 1, '" + usuario + "', " + idmesa + ", 1)";
             System.out.println(consulta);
             bd.ejecutarInsert(consulta);
+            primerInsert();
         }
         int producto = idProducto;
         consulta = "SELECT count(*) as lineas "
@@ -285,6 +283,17 @@ public class Peticiones extends HttpServlet {
                 System.out.println(consulta);
             }
         } catch (SQLException ex) {
+        }
+    }
+    
+    private void primerInsert(){
+        try {
+            if (r.next()) {
+                pedido = r.getInt("idpedido");
+                estado = r.getInt("estadopedido");;
+            }
+        } catch (SQLException ex) {
+            System.out.println(ex.toString());
         }
     }
 
