@@ -60,7 +60,7 @@ public class Peticiones extends HttpServlet {
             bd.conectar();
             String login = request.getParameter("login");
             String pass = request.getParameter("password");
-            ResultSet r = bd.ejecutarSelect("SELECT * FROM usuarios WHERE idUsuario='" + login + "' AND passwordUsuario='" + Auxiliar.encriptarPass(pass) + "'");
+            ResultSet r = bd.ejecutarSelect("SELECT * FROM roles WHERE nombreRol='" + login + "' AND passRol='" + Auxiliar.encriptarPass(pass) + "'");
             JSONObject objetoJSON = new JSONObject();
             response.setContentType("application/json; charset=utf-8");
             response.setCharacterEncoding("UTF-8");
