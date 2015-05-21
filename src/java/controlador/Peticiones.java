@@ -188,7 +188,7 @@ public class Peticiones extends HttpServlet {
                             bd.cargarDriver();
                             bd.conectar();
 
-                            ResultSet r = bd.ejecutarSelect("SELECT idProducto, nombreProducto, precioProducto, Familias_idFamilias FROM productos order by idProducto");
+                            ResultSet r = bd.ejecutarSelect("SELECT idProducto, nombreProducto,fotoProducto , precioProducto, Familias_idFamilias FROM productos order by idProducto");
 
                             JSONArray array = new JSONArray();
                             ResultSetMetaData rsMetaData = null;
@@ -206,7 +206,6 @@ public class Peticiones extends HttpServlet {
                                     for (int i = 1; i <= columns; i++) {
                                         objetoJSON.put(rsMetaData.getColumnLabel(i), r.getString(i));
                                     }
-                                    System.out.println(objetoJSON + "\n");
                                     array.put(objetoJSON);
                                 }
                             } catch (SQLException ex) {
