@@ -13,8 +13,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -231,6 +229,17 @@ public class Peticiones extends HttpServlet {
         String usuario = "admin";
         pedido = 0;
         estado = 1;
+        String consulta = "";
+        String fechaHora = getFecha();
+        consulta = "SELECT * FROM caja WHERE estadoCaja=0";
+        r = bd.ejecutarSelect(consulta);
+        try {
+            if (!r.next()) {
+                consulta = "insert into caja (fechaApertura, cantidadApertura, cantidadCierre, estadoCaja) values ('" + fechaHora + "', 0, 0, 0)";
+                bd.ejecutarInsert(consulta);
+            }
+        } catch (SQLException ex) {
+        }
         r = bd.ejecutarSelect("select * from pedidos where mesas_idmesa="
                 + idmesa
                 + " order by fechapedido desc");
@@ -242,10 +251,10 @@ public class Peticiones extends HttpServlet {
         } catch (SQLException ex) {
             System.out.println(ex.toString());
         }
-        String consulta = "";
+        
         if (pedido == 0 || estado == 1) {
-            String fechaHora = getFecha();
-            consulta = "insert into pedidos values(0, '" + fechaHora + "', 0, 0, 1, '" + usuario + "', " + idmesa + ", 1)";
+            fechaHora = getFecha();
+            consulta = "insert into pedidos values(0, '" + fechaHora + "', 0, 0, 1, '" + usuario + "', " + idmesa + ", 1, 0)";
             System.out.println(consulta);
             bd.ejecutarInsert(consulta);
             primerInsert(idmesa);
@@ -256,15 +265,13 @@ public class Peticiones extends HttpServlet {
                 + "WHERE pedidos_idpedido=" + pedido
                 + " and productos_idproducto=" + producto
                 + " and estadolinea=0";
-        System.out.println(consulta);
         r = bd.ejecutarSelect(consulta);
         try {
             r.next();
             System.out.println("!!!Numero de lineas " + r.getInt("lineas"));
             if (r.getInt("lineas") == 0) {
-                consulta = "insert into lineapedidos values(0,1,0,0," + pedido + "," + producto + ")";
+                consulta = "insert into lineapedidos values(0,1,1,0," + pedido + "," + producto + ")";
                 bd.ejecutarInsert(consulta);
-                System.out.println(consulta);
             } else {
                 ResultSet cantidad = bd.ejecutarSelect(
                         "SELECT cantidadlinea "
@@ -278,7 +285,6 @@ public class Peticiones extends HttpServlet {
                         + " and productos_idproducto=" + producto
                         + " and estadolinea=0";
                 bd.ejecutarUpdate(consulta);
-                System.out.println(consulta);
             }
         } catch (SQLException ex) {
         }
