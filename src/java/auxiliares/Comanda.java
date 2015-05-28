@@ -7,10 +7,12 @@ public class Comanda {
 
     public String contenidoComanda = "\n{{fecha}}\n"
             + "==========================================\n"
+            +"\n{{mesa}}\n"
+            + "==========================================\n"
             + "{{items}}\n"
             + "==========================================\n";
 
-    public Comanda(ArrayList<Producto> items, int mesa) {
+    public Comanda(ArrayList<Producto> items, String mesa) {
         Calendar cal1 = Calendar.getInstance();
 
         String dia = "" + cal1.get(Calendar.DATE);
@@ -38,6 +40,7 @@ public class Comanda {
                 + ":" + minutos;
 
         this.contenidoComanda = this.contenidoComanda.replace("{{fecha}}", fecha);
+        this.contenidoComanda = this.contenidoComanda.replace("{{mesa}}", mesa);
         String pedido="";
         for (int i = 0; i < items.size(); i++) {
             pedido = pedido + "\n" + String.format("%-14.14s", items.get(i).getNombreProducto()) + "  " + String.format("%3d", items.get(i).getCantidad());
