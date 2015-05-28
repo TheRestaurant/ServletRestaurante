@@ -146,7 +146,7 @@ public class Auxiliar {
         }
     }
 
-    public static void imprimirTicket(Ticket ticket) {
+    public static void imprimir(String impresion) {
         try {
             PrintService service = PrintServiceLookup.lookupDefaultPrintService();
             DocPrintJob job = service.createPrintJob();
@@ -158,7 +158,7 @@ public class Auxiliar {
             service = PrintServiceLookup.lookupDefaultPrintService();
             job = service.createPrintJob();
 
-            byte[] bytes = ticket.contenidoTicket.getBytes();
+            byte[] bytes = impresion.getBytes();
 
             flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
             doc = new SimpleDoc(bytes, flavor, null);
