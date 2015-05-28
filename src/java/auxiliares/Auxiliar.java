@@ -148,21 +148,22 @@ public class Auxiliar {
 
     public static void imprimir(String impresion) {
         try {
+            /*
             PrintService service = PrintServiceLookup.lookupDefaultPrintService();
             DocPrintJob job = service.createPrintJob();
             DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
             SimpleDoc doc = new SimpleDoc(new MyPrintable(), flavor, null);
             PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
             job.print(doc, aset);
-
-            service = PrintServiceLookup.lookupDefaultPrintService();
-            job = service.createPrintJob();
+            */
+            PrintService service = PrintServiceLookup.lookupDefaultPrintService();
+            DocPrintJob job = service.createPrintJob();
 
             byte[] bytes = impresion.getBytes();
 
-            flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
-            doc = new SimpleDoc(bytes, flavor, null);
-
+            DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+            SimpleDoc doc = new SimpleDoc(bytes, flavor, null);
+            PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
             job.print(doc, aset);
 
             FileWriter imp = new FileWriter("LPT1");

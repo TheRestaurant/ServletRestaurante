@@ -109,7 +109,7 @@ public class Peticiones extends HttpServlet {
                     nombreMesa.next();
                     String nombre = nombreMesa.getString("nombreMesa")+" "+nombreMesa.getString("nombreZona");
                     Comanda comanda= new Comanda(productos,nombre);
-                    System.out.println(comanda.contenidoComanda);
+                    System.out.println("Ticket: \n"+comanda.contenidoComanda);
                     Auxiliar.imprimir(comanda.contenidoComanda);                    
                 } catch (JSONException ex) {
                     System.out.println("Error JSON "+ex.toString());
