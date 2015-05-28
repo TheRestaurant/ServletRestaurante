@@ -6,13 +6,17 @@
 package controlador;
 
 import auxiliares.Auxiliar;
+import auxiliares.Producto;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -84,15 +88,30 @@ public class Peticiones extends HttpServlet {
                 String s = request.getParameter("datos");
                 JSONTokener token = new JSONTokener(s);
                 JSONArray ar = null;
+                ArrayList <Producto> productos = new ArrayList();
                 try {
                     ar = new JSONArray(token);
                     for (int i = 0; i < ar.length(); i++) {
                         agregarProducto(ar.getJSONObject(i).getInt("idMesa"), ar.getJSONObject(i).getInt("idProducto"));
-                        System.out.println(ar.getJSONObject(i).toString());
+                        ResultSet rs = bd.ejecutarSelect("SELECT nombreProducto from productos where idProducto = "+ar.getJSONObject(i).getInt("idProducto"));                    
+                        rs.next();
+                        String nombre = rs.getString("nombreProducto");
+                        Producto pr = new Producto(nombre);
+                        if(productos.contains(pr)){
+                            int pos = productos.indexOf(pr);
+                            productos.get(pos).sumaCantidad();
+                        }else{
+                            productos.add(new Producto(nombre));
+                        }
                     }
                 } catch (JSONException ex) {
-
+                    System.out.println("Error JSON "+ex.toString());
+                } catch (SQLException ex) {
+                    System.out.println("Error SQL "+ex.toString());
                 }
+                
+                // Crear un el objeto para enviar a comanda para imprimir, implementar
+                
                 response.setHeader("Content-Type", "application/json");
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
@@ -255,7 +274,6 @@ public class Peticiones extends HttpServlet {
         if (pedido == 0 || estado == 1) {
             fechaHora = getFecha();
             consulta = "insert into pedidos values(0, '" + fechaHora + "', 0, 0, 1, '" + usuario + "', " + idmesa + ", 1, 0)";
-            System.out.println(consulta);
             bd.ejecutarInsert(consulta);
             primerInsert(idmesa);
         }
@@ -263,12 +281,10 @@ public class Peticiones extends HttpServlet {
         consulta = "SELECT count(*) as lineas "
                 + "FROM lineapedidos "
                 + "WHERE pedidos_idpedido=" + pedido
-                + " and productos_idproducto=" + producto
-                + " and estadolinea=0";
+                + " and productos_idproducto=" + producto;
         r = bd.ejecutarSelect(consulta);
         try {
             r.next();
-            System.out.println("!!!Numero de lineas " + r.getInt("lineas"));
             if (r.getInt("lineas") == 0) {
                 consulta = "insert into lineapedidos values(0,1,1,0," + pedido + "," + producto + ")";
                 bd.ejecutarInsert(consulta);
@@ -277,13 +293,11 @@ public class Peticiones extends HttpServlet {
                         "SELECT cantidadlinea "
                         + "FROM lineapedidos "
                         + "WHERE pedidos_idpedido=" + pedido
-                        + " and productos_idproducto=" + producto
-                        + " and estadolinea=0");
+                        + " and productos_idproducto=" + producto);
                 cantidad.next();
                 consulta = "update lineapedidos set cantidadlinea=" + (1 + cantidad.getInt("cantidadlinea"))
                         + " where pedidos_idpedido=" + pedido
-                        + " and productos_idproducto=" + producto
-                        + " and estadolinea=0";
+                        + " and productos_idproducto=" + producto;
                 bd.ejecutarUpdate(consulta);
             }
         } catch (SQLException ex) {

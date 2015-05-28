@@ -107,7 +107,21 @@ public class Auxiliar {
         return desencriptado;
     }
 
-    
+     //Metodo para generar String sin caracteres especiales para imprimir
+    public static String limpiarString(String producto) {
+        producto = producto.replace("á", "a");
+        producto = producto.replace("é", "e");
+        producto = producto.replace("í", "i");
+        producto = producto.replace("ó", "o");
+        producto = producto.replace("ú", "u");
+        producto = producto.replace("ñ", "n");
+        producto = producto.replace("Á", "A");
+        producto = producto.replace("É", "E");
+        producto = producto.replace("Í", "I");
+        producto = producto.replace("Ó", "O");
+        producto = producto.replace("Ú", "U");
+        return producto;
+    }
 
     public static void cerrarTeclado() {
         String[] cmd = {"cmd.exe", "/C", "taskkill /IM osk.exe"};
