@@ -105,7 +105,10 @@ public class Peticiones extends HttpServlet {
                             productos.add(new Producto(nombre));
                         }
                     }
-                    Comanda comanda= new Comanda(productos,ar.getJSONObject(0).getInt("idMesa"));
+                    ResultSet nombreMesa = bd.ejecutarSelect("SELECT nombreMesa, nombreZona from mesas inner join zona on idZona=Zona_Idzona where idmesa="+ar.getJSONObject(0).getInt("idMesa"));
+                    nombreMesa.next();
+                    String nombre = nombreMesa.getString("nombreMesa")+" "+nombreMesa.getString("nombreZona");
+                    Comanda comanda= new Comanda(productos,nombre);
                     System.out.println(comanda.contenidoComanda);
                     Auxiliar.imprimir(comanda.contenidoComanda);                    
                 } catch (JSONException ex) {
