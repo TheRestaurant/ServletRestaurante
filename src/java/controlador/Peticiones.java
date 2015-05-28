@@ -6,6 +6,7 @@
 package controlador;
 
 import auxiliares.Auxiliar;
+import auxiliares.Comanda;
 import auxiliares.Producto;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -104,6 +105,9 @@ public class Peticiones extends HttpServlet {
                             productos.add(new Producto(nombre));
                         }
                     }
+                    Comanda comanda= new Comanda(productos,ar.getJSONObject(0).getInt("idMesa"));
+                    System.out.println(comanda.contenidoComanda);
+                    Auxiliar.imprimir(comanda.contenidoComanda);                    
                 } catch (JSONException ex) {
                     System.out.println("Error JSON "+ex.toString());
                 } catch (SQLException ex) {
